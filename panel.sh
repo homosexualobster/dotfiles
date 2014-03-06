@@ -13,7 +13,7 @@ panel_width=${geometry[2]}
 panel_height=16
 font="-*-fixed-medium-*-*-*-12-*-*-*-*-*-*-*"
 bgcolor=$(herbstclient get frame_border_normal_color)
-selbg=$(herbstclient get window_border_active_color)
+selbg='#666666'
 selfg='#101010'
 
 ####
@@ -121,5 +121,7 @@ herbstclient pad $monitor $panel_height
         done
 } 2> /dev/null | dzen2 -w $panel_width -x $x -y $y -fn "$font" -h $panel_height \
     -ta l -bg "$bgcolor" -fg '#efefef'
+
+
 
 
