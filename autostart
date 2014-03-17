@@ -2,80 +2,111 @@
 
 # this is a simple config for herbstluftwm
 
-function hc() {
+hc() {
     herbstclient "$@"
 }
 
 hc emit_hook reload
 
-
+xsetroot -solid '#5A8E3A'
 
 # remove all existing keybindings
 hc keyunbind --all
 
 # keybindings
-Mod=Mod4
+# if you have a super key you will be much happier with Mod set to Mod4
+#Mod=Mod1    # Use alt as the main modifier
+Mod=Mod4   # Use the super key as the main modifier
+#Mod1=Mod1
+
 hc keybind $Mod-Shift-q quit
 hc keybind $Mod-Shift-r reload
 hc keybind $Mod-Shift-c close
 hc keybind $Mod-Return spawn xfce4-terminal
-hc keybind $Mod-d spawn dmenu_run
+hc keybind $Mod-d spawn dmenu_run -w 500 -l 15 -x 433 -h 10 -sb '#E64FA4' -nb '#1C1C1C'
+hc keybind $Mod-F7 spawn mpc toggle
+hc keybind $Mod-F9 spawn mpc prev
+hc keybind $Mod-F10 spawn mpc next
+hc keybind XF86AudioLowerVolume spawn amixer set Master playback 3dB-
+hc keybind XF86AudioRaiseVolume spawn amixer set Master playback 3dB+
+hc keybind XF86AudioMute spawn amixer set Master toggle
+
+# basic movement
+# focusing clients
+hc keybind $Mod-Left  focus left
+hc keybind $Mod-Down  focus down
+hc keybind $Mod-Up    focus up
+hc keybind $Mod-Right focus right
+hc keybind $Mod-h     focus left
+hc keybind $Mod-j     focus down
+hc keybind $Mod-k     focus up
+hc keybind $Mod-l     focus right
+
+# moving clients
+hc keybind $Mod-Shift-Left  shift left
+hc keybind $Mod-Shift-Down  shift down
+hc keybind $Mod-Shift-Up    shift up
+hc keybind $Mod-Shift-Right shift right
+hc keybind $Mod-Shift-h     shift left
+hc keybind $Mod-Shift-j     shift down
+hc keybind $Mod-Shift-k     shift up
+hc keybind $Mod-Shift-l     shift right
+
+# splitting frames
+# create an empty frame at the specified direction
+hc keybind $Mod-u       split   bottom  0.5
+hc keybind $Mod-o       split   right   0.5
+# let the current frame explode into subframes
+hc keybind $Mod-Control-space split explode
+
+# resizing frames
+resizestep=0.05
+hc keybind $Mod-Control-h       resize left +$resizestep
+hc keybind $Mod-Control-j       resize down +$resizestep
+hc keybind $Mod-Control-k       resize up +$resizestep
+hc keybind $Mod-Control-l       resize right +$resizestep
+hc keybind $Mod-Control-Left    resize left +$resizestep
+hc keybind $Mod-Control-Down    resize down +$resizestep
+hc keybind $Mod-Control-Up      resize up +$resizestep
+hc keybind $Mod-Control-Right   resize right +$resizestep
 
 # tags
-TAG_NAMES=( "I" "II" "III" "IV" "V" "VI" "VII" "VIII" "IX" )
+tag_names=( "I" "II" "III" "IV" "V" "VI" "VII" "VIII" "IX" )
+tag_keys=( {1..9} 0 )
 
-hc rename default "${TAG_NAMES[0]}" || true
-for i in ${!TAG_NAMES[@]} ; do
-    hc add "${TAG_NAMES[$i]}"
-done
-
-for i in {0..9}; do
-  j=$(( $i + 1 % 10))
-  hc keybind $Mod-$j  use_index $i
-  hc keybind $Mode-Shift-$j move_index $i
+hc rename default "${tag_names[0]}" || true
+for i in ${!tag_names[@]} ; do
+    hc add "${tag_names[$i]}"
+    key="${tag_keys[$i]}"
+    if ! [ -z "$key" ] ; then
+        hc keybind "$Mod-$key" use_index "$i"
+        hc keybind "$Mod-Shift-$key" move_index "$i"
+    fi
 done
 
 # cycle through tags
-hc keybind $Mod-n use_index +1
-hc keybind $Mod-b use_index -1
-
+hc keybind $Mod-period use_index +1 --skip-visible
+hc keybind $Mod-comma  use_index -1 --skip-visible
 
 # layouting
 hc keybind $Mod-r remove
 hc keybind $Mod-space cycle_layout 1
-hc keybind $Mod-u split vertical 0.5
-hc keybind $Mod-o split horizontal 0.5
 hc keybind $Mod-s floating toggle
 hc keybind $Mod-f fullscreen toggle
-hc keybind $Mod-n set_layout grid
-hc keybind $Mod-m set_layout max
-
-# resizing
-RESIZESTEP=0.05
-hc keybind $Mod-Control-h resize left +$RESIZESTEP
-hc keybind $Mod-Control-j resize down +$RESIZESTEP
-hc keybind $Mod-Control-k resize up +$RESIZESTEP
-hc keybind $Mod-Control-l resize right +$RESIZESTEP
+hc keybind $Mod-p pseudotile toggle
 
 # mouse
 hc mouseunbind --all
 hc mousebind $Mod-Button1 move
-hc mousebind $Mod-Button2 resize
-hc mousebind $Mod-Button3 zoom
+hc mousebind $Mod-Button2 zoom
+hc mousebind $Mod-Button3 resize
 
 # focus
 hc keybind $Mod-BackSpace   cycle_monitor
 hc keybind $Mod-Tab         cycle_all +1
 hc keybind $Mod-Shift-Tab   cycle_all -1
 hc keybind $Mod-c cycle
-hc keybind $Mod-left focus left
-hc keybind $Mod-down focus down
-hc keybind $Mod-up focus up
-hc keybind $Mod-right focus right
-hc keybind $Mod-Shift-left shift left
-hc keybind $Mod-Shift-down shift down
-hc keybind $Mod-Shift-up shift up
-hc keybind $Mod-Shift-right shift right
+hc keybind $Mod-i jumpto urgent
 
 # colors
 hc set frame_border_active_color '#222222'
@@ -84,14 +115,19 @@ hc set frame_bg_normal_color '#565656'
 hc set frame_bg_active_color '#345F0C'
 hc set frame_border_width 0
 hc set window_border_width 5
-hc set window_border_normal_color '#454545'
-hc set window_border_active_color '#9fbc00'
+hc set window_border_inner_width 1
+hc set window_border_normal_color '#FFFFFF'
+hc set window_border_active_color '#FFFFFF'
 hc set always_show_frame 1
+hc set frame_bg_transparent 1
+hc set frame_transparent_width -1
 hc set window_gap 15
-
-hc set focus_follows_mouse 1
-hc set raise_on_click 1
-hc set raise_on_focus 0
+# add overlapping window borders
+hc set frame_gap 0
+hc set frame_padding 0
+hc set smart_window_surroundings 0
+hc set smart_frame_surroundings 1
+hc set mouse_recenter_gap 0
 
 # rules
 hc unrule -F
@@ -106,16 +142,19 @@ hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK)' manage=off
 # unlock, just to be sure
 hc unlock
 
+herbstclient set tree_style '╾│ ├└╼─┐'
+
 # do multi monitor setup here, e.g.:
-hc remove_monitor 1
-hc move_monitor 0 1366x768+0+0
-hc add_monitor 1366x768+1366+0
+# hc set_monitors 1280x1024+0+0 1280x1024+1280+0
+# or simply:
+# hc detect_monitors
 
 # find the panel
 panel=~/.config/herbstluftwm/panel.sh
-[ -x "$panel" ] || panel=/etc/xdg/herbstluftwm/panel.sh
+[ -x "$panel" ] || panel=~/.config/herbstluftwm/panel.sh
 for monitor in $(herbstclient list_monitors | cut -d: -f1) ; do
     # start it on each monitor
-    $panel $monitor &
+    "$panel" $monitor &
 done
 
+#start sum shit
