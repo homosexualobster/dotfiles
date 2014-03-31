@@ -14,7 +14,7 @@ panel_width=${geometry[2]}
 panel_height=15
 font="-*-fixed-medium-*-*-*-10-*-*-*-*-*-*-*"
 bgcolor='#1C1C1C'
-selbg='#D40055'
+selbg='#dddddd'
 selfg='#101010'
 
 playing() {
